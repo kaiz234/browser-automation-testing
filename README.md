@@ -12,12 +12,22 @@ Example scenarios:
 
 These are example tests for a public demo site. They do not claim to test an employer's systems.
 
-## Files
+## Tools
+
+- Python
+- Playwright
+- pytest and pytest-playwright
+- Chromium
+- GitHub Actions
+
+## Project files
 
 - `test_browser_automation.py` — four example functional tests.
 - `requirements.txt` — Python dependencies.
+- `TEST-RESULTS.md` — recorded local test results.
+- `.github/workflows/playwright-tests.yml` — CI workflow that runs the tests on pushes and pull requests and can also be started manually.
 
-## Setup (Windows PowerShell)
+## Local setup (Windows PowerShell)
 
 Open PowerShell in the folder containing these files, then run:
 
@@ -27,7 +37,18 @@ python -m playwright install chromium
 python -m pytest -v
 ```
 
-`pytest-playwright` supplies the built-in `page` fixture. The tests use regular-expression URL assertions so they check the URL suffix rather than treating a glob-like string as an exact URL.
+`pytest-playwright` supplies the built-in `page` fixture used by the tests.
+
+## Continuous integration with GitHub Actions
+
+The workflow at `.github/workflows/playwright-tests.yml`:
+1. Checks out the repository.
+2. Sets up Python 3.12.
+3. Installs the Python dependencies.
+4. Installs Chromium and its system dependencies.
+5. Runs `python -m pytest -v`.
+
+It is configured to run on pushes, pull requests, and manual dispatch (`workflow_dispatch`). A successful workflow run means the job completed without a reported failure. To confirm individual test results, open the run in the GitHub **Actions** tab and inspect the **Run browser tests** step and its pytest summary.
 
 ## Optional configuration
 
@@ -49,6 +70,12 @@ python -m pytest -v
 | Add product to cart | Cart badge shows one item and cart contains the selected product |
 | Invalid login displays error | A visible login error is shown |
 
+## Recorded results
+
+The local run recorded in `TEST-RESULTS.md` reported **4 passed in 2.65 seconds** on Windows with Python 3.14.8, pytest 9.1.1, and Chromium.
+
+The first GitHub Actions workflow run was also observed as successful in the repository's Actions page. The exact CI test count should be confirmed in that run's `Run browser tests` step before reporting it as a separate result.
+
 ## Quality practices demonstrated
 
 - Arrange / act / assert.
@@ -56,14 +83,8 @@ python -m pytest -v
 - Reusable login helper.
 - Environment-variable configuration.
 - Positive and negative-path testing.
-
-## Troubleshooting
-
-- **`fixture 'page' not found`:** run `python -m pip install -r requirements.txt`.
-- **Browser executable missing:** run `python -m playwright install chromium`.
-- **Timeout or selector failure:** check the demo site and current page markup; site behavior may change.
-- **Unexpected login result:** check the public demo site's availability and credentials.
+- CI execution on pushes and pull requests.
 
 ## Limitations
 
-This is a learning/portfolio example, not a comprehensive test suite. It depends on an external public demo site and should not be described as passing until a real run completes successfully. It does not test production systems, performance, security, or accessibility.
+This is a learning/portfolio example, not a comprehensive test suite. It depends on an external public demo site and does not test production systems, performance, security, or accessibility. Results may vary if the demo site changes.
